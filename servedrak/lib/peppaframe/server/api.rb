@@ -1,4 +1,4 @@
-module Servedark
+module Peppaframe
   module Server
     class Api
       def initialize(create_endpoint: nil,
@@ -14,6 +14,7 @@ module Servedark
       end
 
       def call(env)
+        env = Rack::Request.new(env) unless env.respond_to?(:get?)
         if env.get?
           call_read(env)
         elsif env.put?
@@ -21,7 +22,7 @@ module Servedark
         elsif env.post?
           call_create(env)
         elsif env.delete?
-          call_update(env)
+          call_delete(env)
         end
       end
 
@@ -52,4 +53,3 @@ module Servedark
     end
   end
 end
-

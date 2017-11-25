@@ -1,4 +1,4 @@
-module Servedrak
+module Peppaframe
   module Server
     class Endpoint
       def initialize(action:, response_handler:)
@@ -7,6 +7,7 @@ module Servedrak
       end
 
       def call(env)
+        env = Rack::Request.new(env) unless env.respond_to?(:params)
         response_handler.call(action.call(env.params))
       end
 

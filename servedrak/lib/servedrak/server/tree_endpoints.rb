@@ -1,5 +1,3 @@
-require_relative 'endpoint'
-require_relative 'api'
 require 'json'
 
 module Servedrak
@@ -14,7 +12,7 @@ module Servedrak
 
       def show_list
         @show_list ||= build_endpoint(self.lists.actions.show,
-                                      -> (items) { [200, JSON_RESPONSE_HEADERS, [ items.map { item.to_h }.to_json ]] })
+                                      -> (items) { [200, JSON_RESPONSE_HEADERS, [items.to_json]] })
       end
 
       def lists_api
@@ -46,11 +44,11 @@ module Servedrak
       end
 
       def api_class
-        @api_class ||= Servedrak::Server::Api
+        @api_class ||= Peppaframe::Server::Api
       end
 
       def endpoint_class
-        @endpoint_class ||= Servedrak::Server::Endpoint
+        @endpoint_class ||= Peppaframe::Server::Endpoint
       end
     end
   end
