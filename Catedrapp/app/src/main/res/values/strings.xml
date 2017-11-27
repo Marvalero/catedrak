@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Catedrapp</string>
+
+    <!--Literals-->
+    <string name="lit_lists">Lists</string>
+
 </resources>
