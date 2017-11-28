@@ -98,15 +98,15 @@ public class MainActivity extends AppCompatActivity {
     public void removeList(long id, String name) {
         final long list_id = id;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Are you sure you want to remove " + name);
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setTitle(getResources().getString(R.string.lit_do_you_want_to_remove) + " " + name + "?");
+        builder.setPositiveButton(R.string.lit_yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mDb.delete(CatedrappContract.ListEntry.TABLE_NAME, CatedrappContract.ListEntry._ID + "=" + list_id, null);
                 mAdapter.swapCursor(getAllLists());
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.lit_no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -124,17 +124,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void addNewList(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("List Name");
+        builder.setTitle(R.string.lit_list_name);
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
-        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.lit_save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 addList(input.getText().toString());
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.lit_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -155,11 +155,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.maimen_import) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Url");
+            builder.setTitle(R.string.lit_url);
             final EditText input = new EditText(this);
+            input.setText(R.string.uri_servedrak);
             input.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
             builder.setView(input);
-            builder.setPositiveButton("Import", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.lit_import, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String uri = input.getText().toString();
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                     new ImportListsTask().execute(importListsUrl);
                 }
             });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.lit_cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
@@ -206,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String listsSearchResults) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            mLoadingIndicator.setVisibility(View.GONE);
             if (listsSearchResults != null && !listsSearchResults.equals("")) {
                 try {
                     JSONArray listsArray = new JSONArray(listsSearchResults);

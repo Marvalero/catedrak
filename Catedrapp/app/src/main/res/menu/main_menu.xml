@@ -2,13 +2,13 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="@string/lit_add"
+    <item
         android:orderInCategory="100"
         android:icon="@drawable/ic_add_white_24px"
         android:id="@+id/maimen_add"
         app:showAsAction="always"/>
 
-    <item android:title="@string/lit_import"
+    <item android:title="@string/lit_import_list"
         android:orderInCategory="100"
         android:id="@+id/maimen_import"
         app:showAsAction="never"/>
