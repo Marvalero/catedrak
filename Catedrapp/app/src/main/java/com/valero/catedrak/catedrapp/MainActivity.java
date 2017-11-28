@@ -70,9 +70,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                onAdapterSwiped((ListRecyclerAdapter.ListViewHolder) viewHolder, direction);
+            }
+
+            public void onAdapterSwiped(ListRecyclerAdapter.ListViewHolder viewHolder, int swipeDir) {
                 long id = (long) viewHolder.itemView.getTag();
-                removeList(id);
+                removeList(id, viewHolder.nameTextView.getText().toString());
                 mAdapter.swapCursor(getAllLists());
             }
         }).attachToRecyclerView(mListRecyclerView);
@@ -90,9 +94,24 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    public void removeList(long id) {
-        mDb.delete(CatedrappContract.ListEntry.TABLE_NAME, CatedrappContract.ListEntry._ID + "=" + id, null);
-        mAdapter.swapCursor(getAllLists());
+    public void removeList(long id, String name) {
+        final long list_id = id;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure you want to remove " + name);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mDb.delete(CatedrappContract.ListEntry.TABLE_NAME, CatedrappContract.ListEntry._ID + "=" + list_id, null);
+                mAdapter.swapCursor(getAllLists());
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
     public void addList(String listName) {
