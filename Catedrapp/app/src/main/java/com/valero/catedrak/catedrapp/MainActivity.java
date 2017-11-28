@@ -1,6 +1,7 @@
 package com.valero.catedrak.catedrapp;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -121,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.swapCursor(getAllLists());
     }
 
-    public void onClickAddNewList(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+    public void addNewList(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("List Name");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -174,6 +175,8 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.show();
             return true;
+        } else if (id == R.id.maimen_add) {
+            addNewList(this);
         }
         return super.onOptionsItemSelected(item);
     }
