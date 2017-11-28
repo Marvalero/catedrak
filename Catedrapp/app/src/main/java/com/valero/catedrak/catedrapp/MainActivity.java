@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         mDb = dbHelper.getWritableDatabase();
         Cursor cursor = getAllLists();
 
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mListRecyclerView.setLayoutManager(linearLayoutManager);

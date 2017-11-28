@@ -29,7 +29,6 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
 
     @Override
     public ListViewHolder onCreateViewHolder(ViewGroup parent, int position) {
-        Log.i("Adapter", "onCreateViewHolder");
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.list_rv_item, parent, false);
@@ -57,11 +56,9 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
     }
 
     public void swapCursor(Cursor newCursor) {
-        // Always close the previous mCursor first
         if (mCursor != null) mCursor.close();
         mCursor = newCursor;
         if (newCursor != null) {
-            // Force the RecyclerView to refresh
             this.notifyDataSetChanged();
         }
     }

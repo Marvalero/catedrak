@@ -5,6 +5,7 @@
     <!--Literals-->
     <string name="lit_lists">Lists</string>
     <string name="lit_import_list">Import Lists</string>
+    <string name="lit_items">Items</string>
     <string name="lit_do_you_want_to_remove">Are you sure you want to remove </string>
     <string name="lit_list_name">List Name</string>
     <string name="lit_save">Save</string>
