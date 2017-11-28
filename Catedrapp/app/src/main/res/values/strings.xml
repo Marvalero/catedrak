@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">Catedrapp</string>
+    <string name="app_name" translatable="false">Catedrapp</string>
 
     <!--Literals-->
     <string name="lit_lists">Lists</string>
+    <string name="lit_import">Import Lists</string>
+    <string name="lit_add">Add</string>
 
 </resources>

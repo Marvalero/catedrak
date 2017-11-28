@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@color/itemView"
     android:gravity="center_vertical"
+    android:layout_marginTop="1dp"
     android:orientation="vertical"
     android:padding="16dp">
 

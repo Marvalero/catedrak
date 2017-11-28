@@ -2,6 +2,7 @@ package com.valero.catedrak.catedrapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.valero.catedrak.catedrapp.data.CatedrappContract;
 import com.valero.catedrak.catedrapp.models.List;
 
 import java.util.ArrayList;
@@ -19,8 +21,10 @@ import java.util.ArrayList;
  */
 
 public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapter.ListViewHolder> {
+    private Cursor mCursor;
 
-    public ListRecyclerAdapter() {
+    public ListRecyclerAdapter(Cursor cursor) {
+        this.mCursor = cursor;
     }
 
     @Override
@@ -35,13 +39,31 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
 
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
-        holder.nameTextView.setText("List " + position + ".");
-        holder.timestampTextView.setText("timestamp");
+        if (!mCursor.moveToPosition(position))
+            return;
+
+        long id = mCursor.getLong(mCursor.getColumnIndex(CatedrappContract.ListEntry._ID));
+        String name = mCursor.getString(mCursor.getColumnIndex(CatedrappContract.ListEntry.COLUMN_LIST_NAME));
+        int timestamp = mCursor.getInt(mCursor.getColumnIndex(CatedrappContract.ListEntry.COLUMN_TIMESTAMP));
+
+        holder.nameTextView.setText(name);
+        holder.timestampTextView.setText("timestamp: " + timestamp);
+        holder.itemView.setTag(id);
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return mCursor.getCount();
+    }
+
+    public void swapCursor(Cursor newCursor) {
+        // Always close the previous mCursor first
+        if (mCursor != null) mCursor.close();
+        mCursor = newCursor;
+        if (newCursor != null) {
+            // Force the RecyclerView to refresh
+            this.notifyDataSetChanged();
+        }
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
