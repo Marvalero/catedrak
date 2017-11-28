@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -60,6 +61,21 @@ public class MainActivity extends AppCompatActivity {
 
         mAdapter = new ListRecyclerAdapter(cursor);
         mListRecyclerView.setAdapter(mAdapter);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                long id = (long) viewHolder.itemView.getTag();
+                removeList(id);
+                mAdapter.swapCursor(getAllLists());
+            }
+        }).attachToRecyclerView(mListRecyclerView);
     }
 
     private Cursor getAllLists() {
@@ -72,6 +88,11 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 CatedrappContract.ListEntry.COLUMN_TIMESTAMP
         );
+    }
+
+    public void removeList(long id) {
+        mDb.delete(CatedrappContract.ListEntry.TABLE_NAME, CatedrappContract.ListEntry._ID + "=" + id, null);
+        mAdapter.swapCursor(getAllLists());
     }
 
     public void addList(String listName) {
@@ -143,8 +164,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class ImportListsTask extends AsyncTask<URL, Void, String> {
-
-        // COMPLETED (26) Override onPreExecute to set the loading indicator to visible
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
