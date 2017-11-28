@@ -44,10 +44,10 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
 
         long id = mCursor.getLong(mCursor.getColumnIndex(CatedrappContract.ListEntry._ID));
         String name = mCursor.getString(mCursor.getColumnIndex(CatedrappContract.ListEntry.COLUMN_LIST_NAME));
-        int timestamp = mCursor.getInt(mCursor.getColumnIndex(CatedrappContract.ListEntry.COLUMN_TIMESTAMP));
+        String timestamp = mCursor.getString(mCursor.getColumnIndex(CatedrappContract.ListEntry.COLUMN_TIMESTAMP));
 
         holder.nameTextView.setText(name);
-        holder.timestampTextView.setText("timestamp: " + timestamp);
+        holder.timestampTextView.setText(timestamp);
         holder.itemView.setTag(id);
     }
 

@@ -3,5 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="@string/lit_import"
+        android:id="@+id/maimen_import"
         app:showAsAction="never"/>
 </menu>
