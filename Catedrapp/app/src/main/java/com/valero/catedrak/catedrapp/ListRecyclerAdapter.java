@@ -3,6 +3,7 @@ package com.valero.catedrak.catedrapp;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,8 +78,10 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
         @Override
         public void onClick(View view) {
             Context context = view.getContext();
-            Intent startSettingsActivity = new Intent(context, ListActivity.class);
-            context.startActivity(startSettingsActivity);
+            Intent startItemActivity = new Intent(context, ListActivity.class);
+            startItemActivity.putExtra(Intent.EXTRA_TEXT, nameTextView.getText().toString());
+            startItemActivity.putExtra(ListActivity.LIST_ID_KEY, (Long) view.getTag());
+            context.startActivity(startItemActivity);
         }
     }
 }
