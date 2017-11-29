@@ -1,16 +1,28 @@
 package com.valero.catedrak.catedrapp;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.valero.catedrak.catedrapp.data.CatedrappContract;
 import com.valero.catedrak.catedrapp.data.CatedrappDbHelper;
+import com.valero.catedrak.catedrapp.helper.Network;
+
+import java.net.URL;
 
 public class ListActivity extends AppCompatActivity {
     public static final String LIST_ID_KEY = "list_id_key";
@@ -57,4 +69,52 @@ public class ListActivity extends AppCompatActivity {
                 null,
                 CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME
         );
-    }}
+    }
+
+    public void addItem(String itemName) {
+        ContentValues cv = new ContentValues();
+        cv.put(CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME, itemName);
+        mDb.insert(CatedrappContract.ItemListEntry.TABLE_NAME, null, cv);
+        mAdapter.swapCursor(getAllItems());
+    }
+
+
+    public void addNewItem(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.lit_item_name);
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton(R.string.lit_save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                addItem(input.getText().toString());
+            }
+        });
+        builder.setNegativeButton(R.string.lit_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.list_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.ac_add) {
+            addNewItem(this);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}

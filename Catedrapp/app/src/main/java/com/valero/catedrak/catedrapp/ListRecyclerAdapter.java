@@ -3,7 +3,6 @@ package com.valero.catedrak.catedrapp;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,9 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.valero.catedrak.catedrapp.data.CatedrappContract;
-import com.valero.catedrak.catedrapp.models.List;
-
-import java.util.ArrayList;
 
 /**
  * Created by valero on 27/11/2017.
