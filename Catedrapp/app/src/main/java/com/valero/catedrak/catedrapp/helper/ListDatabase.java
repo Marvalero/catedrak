@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.valero.catedrak.catedrapp.data.CatedrappContract;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by valero on 29/11/2017.
  */
@@ -63,5 +66,22 @@ public class ListDatabase {
                 null,
                 CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME
         );
+    }
+
+    public static void completeItem(SQLiteDatabase dbList, long itemId) {
+        ContentValues cv = new ContentValues();
+        cv.put(CatedrappContract.ItemListEntry.COLUMN_COMPLETED_AT,
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+
+        dbList.update(CatedrappContract.ItemListEntry.TABLE_NAME, cv,
+                CatedrappContract.ItemListEntry._ID +" = ?", new String[]{String.valueOf(itemId)});
+    }
+
+    public static void undoCompleteItem(SQLiteDatabase dbList, long itemId) {
+        ContentValues cv = new ContentValues();
+        cv.putNull(CatedrappContract.ItemListEntry.COLUMN_COMPLETED_AT);
+
+        dbList.update(CatedrappContract.ItemListEntry.TABLE_NAME, cv,
+                CatedrappContract.ItemListEntry._ID +" = ?", new String[]{String.valueOf(itemId)});
     }
 }

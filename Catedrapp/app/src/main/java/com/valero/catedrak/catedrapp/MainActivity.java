@@ -1,6 +1,5 @@
 package com.valero.catedrak.catedrapp;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -23,7 +22,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
-import com.valero.catedrak.catedrapp.data.CatedrappContract;
 import com.valero.catedrak.catedrapp.data.CatedrappDbHelper;
 import com.valero.catedrak.catedrapp.helper.ListDatabase;
 import com.valero.catedrak.catedrapp.helper.Network;
@@ -32,12 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private ListRecyclerAdapter mAdapter;

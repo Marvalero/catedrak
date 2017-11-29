@@ -3,12 +3,14 @@ package com.valero.catedrak.catedrapp;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,9 +22,17 @@ import com.valero.catedrak.catedrapp.data.CatedrappContract;
 
 public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ItemViewHolder> {
     private Cursor mCursor;
+    private ProgressBar mLoadingIndicator;
+    final private ListItemListener mOnClickListener;
 
-    public ItemRecyclerAdapter(Cursor cursor) {
+    public interface ListItemListener {
+        void onCompletedItem(View view);
+        void onUndoCompletedItem(View view);
+    }
+
+    public ItemRecyclerAdapter(Cursor cursor, ListItemListener listener) {
         this.mCursor = cursor;
+        mOnClickListener = listener;
     }
 
     @Override
@@ -42,11 +52,16 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         String name = mCursor.getString(mCursor.getColumnIndex(CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME));
         String identifier = mCursor.getString(mCursor.getColumnIndex(CatedrappContract.ItemListEntry.COLUMN_IDENTIFIER));
         String notes = mCursor.getString(mCursor.getColumnIndex(CatedrappContract.ItemListEntry.COLUMN_NOTES));
+        String completedAt = mCursor.getString(mCursor.getColumnIndex(CatedrappContract.ItemListEntry.COLUMN_COMPLETED_AT));
 
         holder.nameTextView.setText(name);
         holder.identifierTextView.setText(identifier);
         holder.notesTextView.setText(notes);
         holder.itemView.setTag(id);
+        if(completedAt != null && completedAt != "") {
+            holder.completedCheckBox.setChecked(true);
+            holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
     }
 
     @Override
@@ -79,8 +94,13 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
 
         @Override
         public void onClick(View view) {
-            Context context = view.getContext();
-            Toast.makeText(context, "CheckBox selected", Toast.LENGTH_SHORT).show();
+            if(completedCheckBox.isChecked()) {
+                nameTextView.setPaintFlags(nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                mOnClickListener.onCompletedItem(itemView);
+            } else {
+                nameTextView.setPaintFlags(nameTextView.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                mOnClickListener.onUndoCompletedItem(itemView);
+            }
         }
     }
 }

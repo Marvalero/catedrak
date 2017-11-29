@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,7 @@ import com.valero.catedrak.catedrapp.helper.Network;
 import java.net.URL;
 import java.util.List;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements ItemRecyclerAdapter.ListItemListener {
     public static final String LIST_ID_KEY = "list_id_key";
     private ItemRecyclerAdapter mAdapter;
     private RecyclerView mListRecyclerView;
@@ -67,7 +68,7 @@ public class ListActivity extends AppCompatActivity {
             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             mListRecyclerView.setLayoutManager(linearLayoutManager);
 
-            mAdapter = new ItemRecyclerAdapter(cursor);
+            mAdapter = new ItemRecyclerAdapter(cursor, this);
             mListRecyclerView.setAdapter(mAdapter);
 
             new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -141,5 +142,17 @@ public class ListActivity extends AppCompatActivity {
             this.finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCompletedItem(View view) {
+        long itemId = (long) view.getTag();
+        ListDatabase.completeItem(mDb, itemId);
+    }
+
+    @Override
+    public void onUndoCompletedItem(View view) {
+        long itemId = (long) view.getTag();
+        ListDatabase.undoCompleteItem(mDb, itemId);
     }
 }
