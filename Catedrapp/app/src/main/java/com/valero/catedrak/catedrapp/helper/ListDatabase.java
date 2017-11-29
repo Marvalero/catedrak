@@ -3,7 +3,6 @@ package com.valero.catedrak.catedrapp.helper;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.valero.catedrak.catedrapp.data.CatedrappContract;
 
@@ -82,6 +81,16 @@ public class ListDatabase {
         );
     }
 
+    public static void updateItem(SQLiteDatabase dbList, long itemId, String name, String identifier, String note) {
+        ContentValues cv = new ContentValues();
+        cv.put(CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME, name);
+        cv.put(CatedrappContract.ItemListEntry.COLUMN_IDENTIFIER, identifier);
+        cv.put(CatedrappContract.ItemListEntry.COLUMN_NOTES, note);
+
+        dbList.update(CatedrappContract.ItemListEntry.TABLE_NAME, cv,
+                CatedrappContract.ItemListEntry._ID +" = ?", new String[]{String.valueOf(itemId)});
+    }
+
     public static void completeItem(SQLiteDatabase dbList, long itemId) {
         ContentValues cv = new ContentValues();
         cv.put(CatedrappContract.ItemListEntry.COLUMN_COMPLETED_AT,
@@ -97,5 +106,26 @@ public class ListDatabase {
 
         dbList.update(CatedrappContract.ItemListEntry.TABLE_NAME, cv,
                 CatedrappContract.ItemListEntry._ID +" = ?", new String[]{String.valueOf(itemId)});
+    }
+
+    public static String[] findItemById(SQLiteDatabase dbList, long itemId) {
+        String whereClause = CatedrappContract.ItemListEntry._ID + " = " + itemId;
+        Cursor cursor = dbList.query(
+                CatedrappContract.ItemListEntry.TABLE_NAME,
+                null,
+                whereClause,
+                null,
+                null,
+                null,
+                CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME
+        );
+        if (!cursor.moveToFirst())
+            return new String[] {"", "", ""};
+
+        String name = cursor.getString(cursor.getColumnIndex(CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME));
+        String identifier = cursor.getString(cursor.getColumnIndex(CatedrappContract.ItemListEntry.COLUMN_IDENTIFIER));
+        String notes = cursor.getString(cursor.getColumnIndex(CatedrappContract.ItemListEntry.COLUMN_NOTES));
+
+        return new String[]{name, identifier, notes};
     }
 }

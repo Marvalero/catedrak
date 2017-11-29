@@ -206,8 +206,7 @@ public class MainActivity extends AppCompatActivity {
                             String itName = itemJSON.getString("name");
                             String itIdentifier = itemJSON.getString("id");
                             String itLastName = itemJSON.getString("last_name");
-                            String itNotes = "Imported from Servedrak";
-                            ListDatabase.addItem(mDb, itName, itIdentifier, itLastName, itNotes, listId);
+                            ListDatabase.addItem(mDb, itName, itIdentifier, itLastName, "", listId);
                         }
                         showToastMessage("Imported: " + name);
                     }

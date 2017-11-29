@@ -179,6 +179,12 @@ public class ListActivity extends AppCompatActivity implements ItemRecyclerAdapt
     }
 
     @Override
+    protected void onResume() {
+        mAdapter.swapCursor(ListDatabase.getAllItems(mDb, mListID));
+        super.onResume();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.ac_add) {

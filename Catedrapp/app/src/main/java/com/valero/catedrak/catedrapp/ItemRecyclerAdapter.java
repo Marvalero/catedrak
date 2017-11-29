@@ -58,6 +58,7 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         holder.identifierTextView.setText(identifier);
         holder.notesTextView.setText(notes);
         holder.itemView.setTag(id);
+
         if(completedAt != null && completedAt != "") {
             holder.completedCheckBox.setChecked(true);
             holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -90,6 +91,15 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             notesTextView = (TextView) itemView.findViewById(R.id.tv_notes);
             completedCheckBox = (CheckBox) itemView.findViewById(R.id.cb_completed);
             completedCheckBox.setOnClickListener(this);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Context context = view.getContext();
+                    Intent startItemActivity = new Intent(context, ItemActivity.class);
+                    startItemActivity.putExtra(ItemActivity.ITEM_ID_KEY, (Long) view.getTag());
+                    context.startActivity(startItemActivity);
+                }
+            });
         }
 
         @Override
