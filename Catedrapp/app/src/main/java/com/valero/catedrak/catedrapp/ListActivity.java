@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,6 +46,11 @@ public class ListActivity extends AppCompatActivity {
 
         mListNameTextView = (TextView) findViewById(R.id.tv_list_name);
         Intent intentThatStartedThisActivity = getIntent();
+
+        ActionBar actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         if (intentThatStartedThisActivity.hasExtra(LIST_ID_KEY) && intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)) {
             mListID = intentThatStartedThisActivity.getLongExtra(LIST_ID_KEY, 0);
@@ -130,6 +137,8 @@ public class ListActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.ac_add) {
             addNewItem(this);
+        } else if (id == android.R.id.home) {
+            this.finish();
         }
         return super.onOptionsItemSelected(item);
     }
