@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -39,8 +40,10 @@ public class ListActivity extends AppCompatActivity implements ItemRecyclerAdapt
     private ItemRecyclerAdapter mAdapter;
     private RecyclerView mListRecyclerView;
     private TextView mListNameTextView;
+    private SearchView mSearch;
     private long mListID;
     private SQLiteDatabase mDb;
+    private Boolean searching = Boolean.FALSE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,31 +137,45 @@ public class ListActivity extends AppCompatActivity implements ItemRecyclerAdapt
         inflater.inflate(R.menu.list_menu, menu);
 
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView search = (SearchView) menu.findItem(R.id.ac_search).getActionView();
-        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
-        final Context context = this;
-        search.setOnCloseListener(new SearchView.OnCloseListener() {
+        mSearch = (SearchView) menu.findItem(R.id.ac_search).getActionView();
+
+        mSearch.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        mSearch.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                searching = false;
                 mAdapter.swapCursor(ListDatabase.getAllItems(mDb, mListID));
                 return false;
             }
         });
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
+                searching = true;
                 mAdapter.swapCursor(ListDatabase.searchItems(mDb, mListID, query));
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                searching = true;
                 return false;
             }
-
         });
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (searching) {
+            searching = false;
+            if (mSearch != null) {
+                mSearch.onActionViewCollapsed();
+            }
+            mAdapter.swapCursor(ListDatabase.getAllItems(mDb, mListID));
+        } else {
+            this.finish();
+        }
     }
 
     @Override
@@ -167,7 +184,7 @@ public class ListActivity extends AppCompatActivity implements ItemRecyclerAdapt
         if (id == R.id.ac_add) {
             addNewItem(this);
         } else if (id == android.R.id.home) {
-            this.finish();
+            onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
