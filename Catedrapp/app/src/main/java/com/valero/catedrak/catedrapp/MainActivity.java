@@ -22,8 +22,10 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
 import com.valero.catedrak.catedrapp.data.CatedrappContract;
 import com.valero.catedrak.catedrapp.data.CatedrappDbHelper;
+import com.valero.catedrak.catedrapp.helper.ListDatabase;
 import com.valero.catedrak.catedrapp.helper.Network;
 
 import org.json.JSONArray;
@@ -47,13 +49,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Open chrome://inspect/
+        Stetho.initializeWithDefaults(this);
 
         mListRecyclerView = (RecyclerView) findViewById(R.id.main_rv_lists);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.main_pb_loanding);
 
         CatedrappDbHelper dbHelper = new CatedrappDbHelper(this);
         mDb = dbHelper.getWritableDatabase();
-        Cursor cursor = getAllLists();
+        Cursor cursor = ListDatabase.getAllLists(mDb);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -77,32 +81,18 @@ public class MainActivity extends AppCompatActivity {
             public void onAdapterSwiped(ListRecyclerAdapter.ListViewHolder viewHolder, int swipeDir) {
                 long id = (long) viewHolder.itemView.getTag();
                 removeList(id, viewHolder.nameTextView.getText().toString());
-                mAdapter.swapCursor(getAllLists());
             }
         }).attachToRecyclerView(mListRecyclerView);
     }
 
-    private Cursor getAllLists() {
-        return mDb.query(
-                CatedrappContract.ListEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                CatedrappContract.ListEntry.COLUMN_TIMESTAMP
-        );
-    }
-
     public void removeList(long id, String name) {
-        final long list_id = id;
+        final long listId = id;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getResources().getString(R.string.lit_do_you_want_to_remove) + " " + name + "?");
         builder.setPositiveButton(R.string.lit_yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mDb.delete(CatedrappContract.ListEntry.TABLE_NAME, CatedrappContract.ListEntry._ID + "=" + list_id, null);
-                mAdapter.swapCursor(getAllLists());
+                ListDatabase.deleteListAndItems(mDb, listId);
             }
         });
         builder.setNegativeButton(R.string.lit_no, new DialogInterface.OnClickListener() {
@@ -111,14 +101,14 @@ public class MainActivity extends AppCompatActivity {
                 dialog.cancel();
             }
         });
+        mAdapter.swapCursor(ListDatabase.getAllLists(mDb));
         builder.show();
     }
 
-    public void addList(String listName) {
-        ContentValues cv = new ContentValues();
-        cv.put(CatedrappContract.ListEntry.COLUMN_LIST_NAME, listName);
-        mDb.insert(CatedrappContract.ListEntry.TABLE_NAME, null, cv);
-        mAdapter.swapCursor(getAllLists());
+    public long addList(String listName) {
+        long id = ListDatabase.addLists(mDb, listName);
+        mAdapter.swapCursor(ListDatabase.getAllLists(mDb));
+        return id;
     }
 
     public void addNewList(Context context) {
@@ -210,9 +200,21 @@ public class MainActivity extends AppCompatActivity {
             if (listsSearchResults != null && !listsSearchResults.equals("")) {
                 try {
                     JSONArray listsArray = new JSONArray(listsSearchResults);
-                    for(int i=0; i<listsArray.length(); i++){
-                        String name = listsArray.getJSONObject(i).getString("name");
-                        addList(name);
+                    for(int li_index=0; li_index<listsArray.length(); li_index++){
+                        JSONObject listJSON = listsArray.getJSONObject(li_index);
+                        String name = listJSON.getString("name");
+                        long listId = addList(name);
+
+                        JSONArray itemsArray = listJSON.getJSONArray("items");
+                        for(int it_index=0; it_index<itemsArray.length(); it_index++) {
+                            Log.i("ImportAc", "Importing Array: " + it_index);
+                            JSONObject itemJSON = itemsArray.getJSONObject(it_index);
+                            String itName = itemJSON.getString("name");
+                            String itIdentifier = itemJSON.getString("id");
+                            String itLastName = itemJSON.getString("last_name");
+                            String itNotes = "Imported from Servedrak";
+                            ListDatabase.addItem(mDb, itName, itIdentifier, itLastName, itNotes, listId);
+                        }
                         showToastMessage("Imported: " + name);
                     }
                 } catch (JSONException e) {

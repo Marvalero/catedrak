@@ -11,24 +11,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.valero.catedrak.catedrapp.data.CatedrappContract;
 import com.valero.catedrak.catedrapp.data.CatedrappDbHelper;
+import com.valero.catedrak.catedrapp.helper.ListDatabase;
 import com.valero.catedrak.catedrapp.helper.Network;
 
 import java.net.URL;
+import java.util.List;
 
 public class ListActivity extends AppCompatActivity {
     public static final String LIST_ID_KEY = "list_id_key";
     private ItemRecyclerAdapter mAdapter;
     private RecyclerView mListRecyclerView;
     private TextView mListNameTextView;
+    private long mListID;
     private SQLiteDatabase mDb;
 
     @Override
@@ -40,7 +46,7 @@ public class ListActivity extends AppCompatActivity {
         Intent intentThatStartedThisActivity = getIntent();
 
         if (intentThatStartedThisActivity.hasExtra(LIST_ID_KEY) && intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)) {
-            Long idEntered = intentThatStartedThisActivity.getLongExtra(LIST_ID_KEY, 0);
+            mListID = intentThatStartedThisActivity.getLongExtra(LIST_ID_KEY, 0);
             String nameEntered = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
             mListNameTextView.setText(nameEntered + " Items");
 
@@ -48,7 +54,7 @@ public class ListActivity extends AppCompatActivity {
 
             CatedrappDbHelper dbHelper = new CatedrappDbHelper(this);
             mDb = dbHelper.getWritableDatabase();
-            Cursor cursor = getAllItems();
+            Cursor cursor = ListDatabase.getAllItems(mDb, mListID);
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
             linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -56,26 +62,36 @@ public class ListActivity extends AppCompatActivity {
 
             mAdapter = new ItemRecyclerAdapter(cursor);
             mListRecyclerView.setAdapter(mAdapter);
+
+            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                    onAdapterSwiped((ItemRecyclerAdapter.ItemViewHolder) viewHolder, direction);
+                }
+
+                public void onAdapterSwiped(ItemRecyclerAdapter.ItemViewHolder viewHolder, int swipeDir) {
+                    long id = (long) viewHolder.itemView.getTag();
+                    removeItem(id);
+                }
+            }).attachToRecyclerView(mListRecyclerView);
         }
     }
 
-    private Cursor getAllItems() {
-        return mDb.query(
-                CatedrappContract.ItemListEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME
-        );
+
+    public void removeItem(long itemListId) {
+        ListDatabase.deleteItem(mDb, itemListId);
+        mAdapter.swapCursor(ListDatabase.getAllItems(mDb, mListID));
     }
 
     public void addItem(String itemName) {
-        ContentValues cv = new ContentValues();
-        cv.put(CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME, itemName);
-        mDb.insert(CatedrappContract.ItemListEntry.TABLE_NAME, null, cv);
-        mAdapter.swapCursor(getAllItems());
+        ListDatabase.addItem(mDb, itemName, null, null, mListID);
+        mAdapter.swapCursor(ListDatabase.getAllItems(mDb, mListID));
     }
 
 
