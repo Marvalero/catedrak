@@ -1,5 +1,6 @@
 package com.valero.catedrak.catedrapp;
 
+import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -130,6 +132,32 @@ public class ListActivity extends AppCompatActivity implements ItemRecyclerAdapt
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.list_menu, menu);
+
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView search = (SearchView) menu.findItem(R.id.ac_search).getActionView();
+        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        final Context context = this;
+        search.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                mAdapter.swapCursor(ListDatabase.getAllItems(mDb, mListID));
+                return false;
+            }
+        });
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
+                mAdapter.swapCursor(ListDatabase.searchItems(mDb, mListID, query));
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+
+        });
         return true;
     }
 

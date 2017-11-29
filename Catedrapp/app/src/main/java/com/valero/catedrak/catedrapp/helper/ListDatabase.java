@@ -68,6 +68,20 @@ public class ListDatabase {
         );
     }
 
+    public static Cursor searchItems(SQLiteDatabase dbList, long listId, String query) {
+        String whereClause = CatedrappContract.ItemListEntry.COLUMN_LIST_ID + " = " + listId + " AND " +
+                CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME + " LIKE ?";
+        return dbList.query(
+                CatedrappContract.ItemListEntry.TABLE_NAME,
+                null,
+                whereClause,
+                new String[] {"%"+ query+ "%" },
+                null,
+                null,
+                CatedrappContract.ItemListEntry.COLUMN_ITEM_NAME
+        );
+    }
+
     public static void completeItem(SQLiteDatabase dbList, long itemId) {
         ContentValues cv = new ContentValues();
         cv.put(CatedrappContract.ItemListEntry.COLUMN_COMPLETED_AT,
