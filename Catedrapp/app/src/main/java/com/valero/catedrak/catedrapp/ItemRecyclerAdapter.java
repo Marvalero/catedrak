@@ -62,6 +62,9 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
         if(completedAt != null && completedAt != "") {
             holder.completedCheckBox.setChecked(true);
             holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        } else {
+            holder.completedCheckBox.setChecked(false);
+            holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
         }
     }
 
