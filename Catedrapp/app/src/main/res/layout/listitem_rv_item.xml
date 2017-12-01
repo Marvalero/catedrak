@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/itemView"
+    android:gravity="center_vertical"
+    android:layout_marginTop="1dp"
+    android:weightSum="2"
+    android:orientation="horizontal"
+    android:padding="16dp">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/itemView"
+        android:gravity="center_vertical"
+        android:layout_marginTop="1dp"
+        android:layout_weight="0.8"
+        android:orientation="horizontal">
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cb_completed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/itemChecked"/>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ItemItemName"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/itemView"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_indentifier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:text="ItemItemIdentifier"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+        <TextView
+            android:id="@+id/tv_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ItemItemNotes"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+    </LinearLayout>
+</LinearLayout>
