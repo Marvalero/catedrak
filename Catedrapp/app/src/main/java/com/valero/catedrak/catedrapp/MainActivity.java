@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.facebook.stetho.Stetho;
 import com.valero.catedrak.catedrapp.data.CatedrappDbHelper;
 import com.valero.catedrak.catedrapp.helper.ListDatabase;
 import com.valero.catedrak.catedrapp.helper.Network;
@@ -43,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Open chrome://inspect/
-        Stetho.initializeWithDefaults(this);
+
 
         mListRecyclerView = (RecyclerView) findViewById(R.id.main_rv_lists);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.main_pb_loanding);

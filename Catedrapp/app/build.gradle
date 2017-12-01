@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'perrisima'
+            keyPassword 'P3rrisima'
+            storeFile file('/Users/valero/server-permissions')
+            storePassword 'P3rrisima'
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.valero.catedrak.catedrapp"
@@ -19,17 +27,12 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'com.android.support:recyclerview-v7:26.1.0'
-
-    // Stetho core
-    compile 'com.facebook.stetho:stetho:1.5.0'
-    //If you want to add a network helper
-    compile 'com.facebook.stetho:stetho-okhttp:1.5.0'
     implementation 'com.android.support:design:26.1.0'
 }
