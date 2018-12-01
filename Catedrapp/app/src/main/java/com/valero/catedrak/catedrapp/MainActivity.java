@@ -199,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
 
                         JSONArray itemsArray = listJSON.getJSONArray("items");
                         for(int it_index=0; it_index<itemsArray.length(); it_index++) {
-                            Log.i("ImportAc", "Importing Array: " + it_index);
                             JSONObject itemJSON = itemsArray.getJSONObject(it_index);
                             String itName = itemJSON.getString("name");
                             String itIdentifier = itemJSON.getString("id");
